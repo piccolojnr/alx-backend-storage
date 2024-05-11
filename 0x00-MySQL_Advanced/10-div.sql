@@ -2,6 +2,7 @@
 -- Drop the function if it already exists
 DROP FUNCTION IF EXISTS SafeDiv;
 
+DELIMITER / /
 -- Create the function SafeDiv
 CREATE FUNCTION SafeDiv(a INT, b INT)
 RETURNS FLOAT
@@ -19,4 +20,6 @@ END IF;
 
 RETURN result;
 
-END;
+END //
+
+DELIMITER;
