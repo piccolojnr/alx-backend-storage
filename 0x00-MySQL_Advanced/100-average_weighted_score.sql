@@ -5,27 +5,37 @@
 -- Procedure ComputeAverageScoreForUser is taking 1 input:
 -- user_id, a users.id value (you can assume user_id is linked to an existing users)
 
-
 DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser;
 
-DELIMITER //
+DELIMITER / /
+
 CREATE PROCEDURE ComputeAverageWeightedScoreForUser (IN user_id INT)
 BEGIN
-    DECLARE avg_score FLOAT;
+    DECLARE average_score FLOAT;
     DECLARE total_score FLOAT;
+    DECLARE total_weight FLOAT;
     
 	-- Calculate the total score for the user
-    SELECT SUM(score) INTO total_score 
-    FROM corrections
-    WHERE user_id = user_id;
-    
-    -- Calculate the average weighted score for the user
-    SELECT SUM(score / total_score * score) INTO avg_score
-    FROM corrections
-    WHERE user_id = user_id;
+    SELECT SUM(c.score * p.score), SUM(p.weight)
+    INTO total_score, total_weight
+    FROM corrections c
+    JOIN projects p ON c.project_id = p.id
+    WHERE c.user_id = user_id;
 
-    SELECT avg_score;    
+    IF total_weight > 0 THEN
+        SET average_score = total_score / total_weight;
+    ELSE
+        SET average_score = 0;
+    END IF;
+    
+    
+    -- Update the users table with the computed average_score
+    UPDATE users
+    SET average_score = average_score
+    WHERE id = p_user_id;
+
 END //
-DELIMITER ;
+
+DELIMITER;
 
 call ComputeAverageWeightedScoreForUser (1);
