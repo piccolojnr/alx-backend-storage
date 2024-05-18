@@ -19,7 +19,7 @@ def count_calls(method: Callable) -> Callable:
         Wrapper function that increments the call
         count and then calls the original method.
         """
-        key = f"{method.__qualname__}"
+        key = method.__qualname__
         self._redis.incr(key)
         return method(self, *args, **kwargs)
 
