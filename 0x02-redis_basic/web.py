@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""
+This module provides a decorator to cache the result of a function.
+"""
 import redis
 import requests
 from functools import wraps
@@ -15,8 +19,15 @@ def cache_page(expiration: int):
     """
 
     def decorator(func: Callable) -> Callable:
+        """
+        Decorator function that caches the result of a function.
+        """
+
         @wraps(func)
         def wrapper(url: str) -> str:
+            """
+            Wrapper function that caches the result of the function.
+            """
             # Track the URL access count
             redis_client.incr(f"count:{url}")
 
